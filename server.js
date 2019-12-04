@@ -19,7 +19,9 @@ server.get('/', (req, res) => {
 //custom middleware
 
 function logger(req, res, next) {
-  console.log(`${req.method} to `)
+  console.log(`${req.method} to ${req.originalUrl}`);
+
+  next();
 }
 
 module.exports = server;
