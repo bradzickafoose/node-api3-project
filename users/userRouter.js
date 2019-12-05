@@ -1,4 +1,6 @@
 const express = require('express');
+const { get, getById, insert, update, remove, getUserPosts } = require('./userDb');
+const Posts = require('../posts/postDb')
 
 const router = express.Router();
 
@@ -33,15 +35,56 @@ router.put('/:id', (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-  // do your magic!
+  const { id } = req.params;
+
+  getById(id)
+    .then(user => {
+      if (user) {
+        req.user = user;
+        return next();
+      }
+
+      res
+        .status(400)
+        .json({ message: "invalid user id" });
+    })
+    .catch((error) => {
+      console.log(error);
+      res
+        .status(500)
+        .json({ message: "error retrieving the user" });
+    });
 }
 
 function validateUser(req, res, next) {
-  // do your magic!
+  const body = req.body;
+
+  if (!body) {
+    res
+      .status(400)
+      .json({ message: 'missing user data' });
+  } else if (!body.name) {
+    res
+      .status(400)
+      .json({ message: 'missing required name field' })
+  }
+  next()
 }
 
 function validatePost(req, res, next) {
-  // do your magic!
+  const body = req.body;
+
+  if (!body) {
+    res
+      .status(400)
+      .json({ message: 'missing post data' })
+  } else if (!body.text) {
+    res
+      .status(400)
+      .json({ message: 'missing required text field' })
+  }
+  next()
+
 }
 
 module.exports = router;
