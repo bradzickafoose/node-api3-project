@@ -27,7 +27,12 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  // do your magic!
+  Users
+    .get()
+    .then(users => res.status(200).json(users))
+    .catch(() => res.status(500).json({
+      message: 'Error retrieving users from the database'
+    }))
 });
 
 router.get('/:id', (req, res) => {
