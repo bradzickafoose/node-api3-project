@@ -7,15 +7,23 @@ const router = express.Router();
 router.post('/', validateUser, (req, res) => {
   const userData = req.body;
 
-  Users.insert(userData)
+  Users
+      .insert(userData)
       .then(user => res.status(200).json(user))
       .catch(() => res.status(500).json({
-        message: 'Error creating a new user'
+        message: 'Error creating a new user to the database'
       }))
 });
 
-router.post('/:id/posts', (req, res) => {
-  // do your magic!
+router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
+  const postData = req.body;
+
+  Posts
+    .insert(postData)
+    .then(post => res.status(200).json(post))
+    .catch(() => res.status(500).json({
+      message: 'Error adding a new post to the database'
+    }))
 });
 
 router.get('/', (req, res) => {
