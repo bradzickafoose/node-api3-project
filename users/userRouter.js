@@ -11,7 +11,7 @@ router.post('/', validateUser, (req, res) => {
       .insert(userData)
       .then(user => res.status(200).json(user))
       .catch(() => res.status(500).json({
-        message: 'Error creating a new user to the database'
+        message: "Error creating a new user to the database"
       }))
 });
 
@@ -22,7 +22,7 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
     .insert(postData)
     .then(post => res.status(200).json(post))
     .catch(() => res.status(500).json({
-      message: 'Error adding a new post to the database'
+      message: "Error adding a new post to the database"
     }))
 });
 
@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
     .get()
     .then(users => res.status(200).json(users))
     .catch(() => res.status(500).json({
-      message: 'Error retrieving users from the database'
+      message: "Error retrieving users from the database"
     }))
 });
 
@@ -40,7 +40,14 @@ router.get('/:id', validateUserId, (req, res) => {
 });
 
 router.get('/:id/posts', (req, res) => {
-  // do your magic!
+  const user = req.user;
+
+  Users
+    .getUserPosts(user.id)
+    .then(posts => res.status(200).json(posts))
+    .catch(() => res.status(500).json({
+      message: "Error retrieving user's posts from the database"
+    }))
 });
 
 router.delete('/:id', (req, res) => {
