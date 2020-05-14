@@ -39,7 +39,7 @@ router.get('/:id', validateUserId, (req, res) => {
   res.status(200).json(req.user)
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   const user = req.user;
 
   Users
@@ -50,8 +50,22 @@ router.get('/:id/posts', (req, res) => {
     }))
 });
 
-router.delete('/:id', (req, res) => {
-  // do your magic!
+router.delete('/:id', validateUserId, (req, res) => {
+  const user = req.user;
+
+  Users
+    .remove(user.id)
+    .then(count => {
+      if (count > 0) {
+        res.status(200).json({
+          message: "Account successfully deleted",
+          user
+        });
+      }
+    })
+    .catch(() => res.status(500).json({
+      message: "Error deleting user from the database"
+    }))
 });
 
 router.put('/:id', (req, res) => {
@@ -86,13 +100,13 @@ function validateUser(req, res, next) {
   const body = req.body;
 
   if (!body) {
-    res
-      .status(400)
-      .json({ message: 'missing user data' });
+    res.status(400).json({
+      message: "Missing user data"
+    });
   } else if (!body.name) {
-    res
-      .status(400)
-      .json({ message: 'missing required name field' })
+    res.status(400).json({
+      message: 'Missing required name field'
+    })
   }
   next()
 }
@@ -101,16 +115,15 @@ function validatePost(req, res, next) {
   const body = req.body;
 
   if (!body) {
-    res
-      .status(400)
-      .json({ message: 'missing post data' })
+    res.status(400).json({
+      message: "Missing post data"
+    })
   } else if (!body.text) {
-    res
-      .status(400)
-      .json({ message: 'missing required text field' })
+    res.status(400).json({
+      message: "Missing required text field"
+    })
   }
   next()
-
 }
 
 module.exports = router;
