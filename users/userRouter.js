@@ -74,11 +74,20 @@ router.delete('/:id', validateUserId, (req, res) => {
     }))
 });
 
-router.put('/:id', (req, res) => {
-  // do your magic!
+// UPDATE USER by ID /api/users/:id
+router.put('/:id', validateUserId, validateUser, (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  Users
+    .update(id, updateData)
+    .then(updatedUser => res.status(200).json(updatedUser))
+    .catch(() => res.status(500).json({
+      message: "Error retrieving the user's info from the database"
+    }))
 });
 
-//custom middleware
+// --- Custom Middleware --- //
 
 function validateUserId(req, res, next) {
   const { id } = req.params;
