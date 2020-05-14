@@ -16,7 +16,7 @@ router.post('/', validateUser, (req, res) => {
       }))
 });
 
-// CREATE NEW USER POST by ID /api/users/:id/posts
+// CREATE USER POST by ID /api/users/:id/posts
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   const postData = req.body;
 
