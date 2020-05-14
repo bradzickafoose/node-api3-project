@@ -4,6 +4,7 @@ const Posts = require('../posts/postDb');
 
 const router = express.Router();
 
+// CREATE NEW USER /api/users
 router.post('/', validateUser, (req, res) => {
   const userData = req.body;
 
@@ -15,6 +16,7 @@ router.post('/', validateUser, (req, res) => {
       }))
 });
 
+// CREATE NEW USER POST by ID /api/users/:id/posts
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   const postData = req.body;
 
@@ -22,10 +24,11 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
     .insert(postData)
     .then(post => res.status(200).json(post))
     .catch(() => res.status(500).json({
-      message: "Error adding a new post to the database"
+      message: "Error adding the new post to the database"
     }))
 });
 
+// GET USERS /api/users
 router.get('/', (req, res) => {
   Users
     .get()
@@ -35,10 +38,12 @@ router.get('/', (req, res) => {
     }))
 });
 
+// GET USER by ID /api/users/:id
 router.get('/:id', validateUserId, (req, res) => {
   res.status(200).json(req.user)
 });
 
+// GET USER POSTS by ID /api/users/:id/posts
 router.get('/:id/posts', validateUserId, (req, res) => {
   const user = req.user;
 
@@ -50,6 +55,7 @@ router.get('/:id/posts', validateUserId, (req, res) => {
     }))
 });
 
+// DELETE USER by ID /api/users/:id
 router.delete('/:id', validateUserId, (req, res) => {
   const user = req.user;
 
@@ -77,22 +83,21 @@ router.put('/:id', (req, res) => {
 function validateUserId(req, res, next) {
   const { id } = req.params;
 
-  getById(id)
+  Users
+    .getById(id)
     .then(user => {
       if (user) {
         req.user = user;
         return next();
       }
-
-      res
-        .status(400)
-        .json({ message: "invalid user id" });
+      res.status(400).json({
+        message: "Invalid user ID"
+      });
     })
-    .catch((error) => {
-      console.log(error);
-      res
-        .status(500)
-        .json({ message: "error retrieving the user" });
+    .catch(() => {
+      res.status(500).json({
+        message: "Error retrieving the user"
+      });
     });
 }
 
@@ -105,7 +110,7 @@ function validateUser(req, res, next) {
     });
   } else if (!body.name) {
     res.status(400).json({
-      message: 'Missing required name field'
+      message: "Missing required name field"
     })
   }
   next()
