@@ -3,6 +3,7 @@ const Posts = require('./postDb');
 
 const router = express.Router();
 
+// GET POSTS /api/posts
 router.get('/', (req, res) => {
   Posts
     .get()
