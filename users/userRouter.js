@@ -1,11 +1,17 @@
 const express = require('express');
-const { get, getById, insert, update, remove, getUserPosts } = require('./userDb');
-const Posts = require('../posts/postDb')
+const Users = require('../users/userDb');
+const Posts = require('../posts/postDb');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  // do your magic!
+router.post('/', validateUser, (req, res) => {
+  const userData = req.body;
+
+  Users.insert(userData)
+      .then(user => res.status(200).json(user))
+      .catch(() => res.status(500).json({
+        message: 'Error creating a new user'
+      }))
 });
 
 router.post('/:id/posts', (req, res) => {
